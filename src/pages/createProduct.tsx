@@ -1,0 +1,12 @@
+import React from 'react'
+import CreateForm from '../components/form'
+
+function CreateProduct() {
+  return (
+    <div>
+        <CreateForm/>
+    </div>
+  )
+}
+
+export default CreateProduct
