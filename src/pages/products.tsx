@@ -12,12 +12,14 @@ function Products(): JSX.Element {
   useEffect(() => {
     fetchProduct(); // Fetch the products from API
     loadFavorites(); // Load favorites from localStorage on mount
-  }, [fetchProduct, loadFavorites]);
+  }, [fetchProduct, loadFavorites]); // Remove `products` from the dependency array
 
   if (error) {
     return (
       <div className="flex justify-center pt-40 items-center text-3xl ">
-        <h1 className="text-gray-300 text-center">Упс, ошибка: <br /> {error}</h1>
+        <h1 className="text-gray-300 text-center">
+          Упс, ошибка: <br /> {error}
+        </h1>
       </div>
     );
   }
@@ -41,7 +43,7 @@ function Products(): JSX.Element {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5 mb-5">
         {noFavoritesMessage ? (
           <div className="col-span-full text-center text-xl text-gray-400">
-              У вас пока нет избранных.
+            У вас пока нет избранных.
           </div>
         ) : (
           filteredProducts.map((product: Product) => (

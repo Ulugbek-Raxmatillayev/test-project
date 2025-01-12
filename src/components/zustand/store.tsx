@@ -2,7 +2,7 @@ import axios from "axios";
 import { create } from "zustand";
 
 export type Product = {
-  id: number;
+  id: string;
   image: string;
   price: number;
   title: string;
@@ -19,7 +19,7 @@ export type ProductStoreId = {
   isLoading: boolean;
   products: Product;
   error: string | null;
-  fetchProduct: (id: number) => Promise<void>;
+  fetchProduct: (id: string) => Promise<void>;
 };
 
 // Zustand store for fetching all products
@@ -45,7 +45,7 @@ export interface Store {
   favorites: Product[];
   showFavorites: boolean;
   addFavorite: (product: Product) => void;
-  removeFavorite: (productId: number) => void;
+  removeFavorite: (productId: string) => void;
   toggleFavorite: (product: Product) => void;
   loadFavorites: () => void; // Load favorites from localStorage
   toggleShowFavorites: (value: boolean) => void; // To toggle favorites filter
@@ -68,7 +68,7 @@ export const useStore = create<Store>((set) => ({
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites)); // Save to localStorage
       return { favorites: updatedFavorites };
     }),
-  removeFavorite: (productId) =>
+  removeFavorite: (productId: string) =>
     set((state) => {
       const updatedFavorites = state.favorites.filter(
         (item) => item.id !== productId
@@ -99,13 +99,13 @@ export const useStore = create<Store>((set) => ({
 export const useProductStoreID = create<ProductStoreId>((set) => ({
   isLoading: false,
   products: {
-    id: 0,
+    id: "",
     image: "",
     price: 0,
-    title: ""
+    title: "",
   },
   error: null,
-  fetchProduct: async (id: number) => {
+  fetchProduct: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
       const response = await axios.get<Product>(
@@ -120,46 +120,112 @@ export const useProductStoreID = create<ProductStoreId>((set) => ({
 
 // Zustand store definition
 interface ProductStoreAdd {
-  products: any[];
+  products: Product[];
   isLoading: boolean;
   error: string | null;
-  addProduct: (id:string,title: string, price: string, image: File | null) => Promise<void>;
+  addProduct: (
+    title: string,
+    price: string,
+    image: File | null
+  ) => Promise<void>;
+  editProduct: (id: string, updatedProduct: Product) => Promise<void>;
+  deleteProduct:  (id: string) => Promise<void>;
 }
 
 export const useProductStoreAdd = create<ProductStoreAdd>((set) => ({
   products: [],
   isLoading: false,
   error: null,
-  addProduct: async (id: string,title: string, price: string, image: File | null) => {
+
+  // addProduct methodi
+  addProduct: async (title: string, price: string, image: File | null) => {
     try {
-      set({ isLoading: true }); // Set loading to true when API call starts
-      const idTo = Number(id) + 1
-      const newProduct = {
+      set({ isLoading: true });
 
-        id: idTo.toString(),
-        title: title,
-        price: price,
-        image: image ? image.name : "",
-      };
+      // FormData yaratish
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("price", price);
+      if (image) {
+        formData.append("image", image);
+      }
 
-      // POST request to JSON Server
-      const response = await axios.post("http://localhost:3000/products", newProduct);
-
+      // POST so'rovni yuborish
+      const response = await axios.post<Product>(
+        "http://localhost:3001/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const resData: Product = response.data;
       if (response.status === 201) {
         set((state) => ({
-          products: [...state.products, response.data], // Add new product to the list
+          products: [...state.products, resData],
         }));
-        alert("Product added successfully!");
+        alert("✅ Product added successfully!");
       } else {
-        set({ error: "Failed to add product" });
-        alert("Failed to add product");
+        set({ error: "❌ Failed to add product" });
+        alert("❌ Failed to add product");
       }
     } catch (error) {
       console.error("Error adding product:", error);
-      set({ error: "Failed to add product. Server error occurred." });
-      alert("Failed to add product. Server error occurred.");
+      set({ error: "❌ Server error occurred while adding product." });
+      alert("❌ Server error occurred while adding product.");
     } finally {
-      set({ isLoading: false }); // Reset loading state
+      set({ isLoading: false });
+    }
+  },
+
+  // Delete product methodi
+  deleteProduct: async (id: string) => {
+    try {
+      set({ isLoading: true });
+      await axios.delete(`http://localhost:3000/products/${id}`);
+      set((state) => ({
+        products: state.products.filter((product) => product.id !== id),
+      }));
+      alert("✅ Product deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      set({ error: "❌ Server error occurred while deleting product." });
+      alert("❌ Failed to delete product.");
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // Edit product methodi
+  editProduct: async (id: string, updatedProduct: Product) => {
+    try {
+      set({ isLoading: true });
+
+      // PUT so'rovini yuborish
+      const response = await axios.put<Product>(
+        `http://localhost:3000/products/${id}`,
+        updatedProduct
+      );
+
+      if (response.status === 200) {
+        // Ma'lumot yangilandi
+        set((state) => ({
+          products: state.products.map((product) =>
+            product.id === id ? updatedProduct : product
+          ),
+        }));
+        alert("✅ Product updated successfully!");
+      } else {
+        set({ error: "❌ Failed to update product" });
+        alert("❌ Failed to update product");
+      }
+    } catch (error) {
+      console.error("Error updating product:", error);
+      set({ error: "❌ Server error occurred while updating product." });
+      alert("❌ Server error occurred while updating product.");
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));
