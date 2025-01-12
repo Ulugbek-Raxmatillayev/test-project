@@ -20,6 +20,9 @@ function Card({ product }: CardProps): JSX.Element {
   function toggleDrop() {
     setShowDown(!showDown);
   }
+  useEffect(() => {
+    fetchProduct
+  },[product])
 
   useEffect(() => {
     const isFavorite = JSON.parse(
@@ -43,6 +46,7 @@ function Card({ product }: CardProps): JSX.Element {
       deleteProduct(product.id);
     }
   };
+
 
   // Open modal to edit product
   const handleEdit = () => {
