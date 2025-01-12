@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useProductStoreAdd } from "./zustand/store";
 import { Product } from "./zustand/store";
 

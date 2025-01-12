@@ -74,10 +74,15 @@ app.post('/upload', upload.single('image'), (req, res) => {
       return res.status(500).json({ error: 'db.json ni tahlil qilishda xatolik' });
     }
 
-    const newId = (db.products.length + 1).toString();
+    // Oxirgi mahsulotning id sini olish
+    let newId = 1; // Agar bo‘sh bo‘lsa, id 1 bo‘ladi
+    if (db.products.length > 0) {
+      const lastProduct = db.products[db.products.length - 1];
+      newId = parseInt(lastProduct.id) + 1; // Oxirgi id ga 1 qo‘shamiz
+    }
 
     const newProduct = {
-      id: newId,
+      id: newId.toString(),
       title,
       price,
       image: imageUrl

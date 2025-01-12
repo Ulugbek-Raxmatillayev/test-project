@@ -10,7 +10,7 @@ function DetailCard() {
   // Fetch the product when the component mounts or when the product ID changes
   useEffect(() => {
     if (id) {
-      fetchProduct(Number(id)); // Pass the product ID as a number
+      fetchProduct(id); // Pass the product ID as a number
     }
   }, [id, fetchProduct]);
 

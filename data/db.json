@@ -1,12 +1,6 @@
 {
   "products": [
     {
-      "id": "2",
-      "title": "Mens Casual Premium Slim Fit T-Shirts ",
-      "price": 22.3,
-      "image": "blob:http://localhost:5173/bf9d8c9a-d571-4db4-8234-c67824018a89"
-    },
-    {
       "id": "3",
       "title": "Mens Cotton Jacket",
       "price": 55.99,
@@ -113,6 +107,12 @@
       "title": "Updated Title",
       "price": 99,
       "image": "https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg"
+    },
+    {
+      "id": "21",
+      "title": "sfc ssdfisdsamdj jaisj ajnia nsdjsanjdnasd",
+      "price": "500",
+      "image": "http://localhost:3001/uploads/1736670131123-logonova.webp"
     }
   ]
 }

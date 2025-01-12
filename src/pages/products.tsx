@@ -5,7 +5,7 @@ import ProductFilter from "../components/filter";
 import { useStore } from "../components/zustand/store"; // Import the zustand store
 
 function Products(): JSX.Element {
-  const { isLoading, products, error, fetchProduct } = useProductStore();
+  const { products, error, fetchProduct } = useProductStore();
   const { showFavorites, favorites, loadFavorites, toggleShowFavorites } =
     useStore(); // Get store data
 

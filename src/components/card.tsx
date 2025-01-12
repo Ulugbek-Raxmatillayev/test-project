@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Product } from "./zustand/store";
 import { useStore, useProductStoreID, useProductStoreAdd } from "./zustand/store";
@@ -9,7 +9,7 @@ type CardProps = {
   product: Product;
 };
 
-function Card({ load, product }: CardProps): JSX.Element {
+function Card({ product }: CardProps): JSX.Element {
   const [like, setLike] = useState(false);
   const { toggleFavorite } = useStore();
   const { fetchProduct } = useProductStoreID();
